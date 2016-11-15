@@ -1,0 +1,175 @@
+﻿html, body {
+    font-family: Arial, Helvetica, sans-serif;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow:hidden;
+}
+
+a, a:link, a:visited {
+    color: #006fbd;
+    text-decoration: none;
+}
+
+a, a:link, a:visited {
+    color: #006fbd;
+}
+
+a:hover {
+    color: #bd0000;
+}
+
+#bar {
+    position: fixed;
+    height: 4rem;
+    bottom: 0px;
+    left: 0px;
+    width: 100vw;
+    background-color: #eee;
+    display: flex;
+    justify-content: center;
+    transition: all 0.3s ease-out;
+}
+
+    #bar:hover {
+        height: 4.7rem;
+    }
+
+#control {
+    max-width: 1440px;
+    min-width: 480px;
+    width: 100%;
+}
+
+#timeline {
+    width: 100%;
+    min-height: 0.3rem;
+    height: 0.3rem;
+    background-color: #ccc;
+    transition: 0.3s all;
+    margin-top: 0;
+}
+
+#bar:hover #timeline {
+    height: 1rem;
+}
+
+#control .panel {
+    position: absolute;
+    z-index: 3;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    max-width: 1440px;
+    min-width: 480px;
+}
+
+#control .left {
+    display: flex;
+    justify-content: flex-start;
+}
+
+#control .right {
+    display: flex;
+    justify-content: flex-end;
+}
+
+#control .panel .buttons {
+    margin-right: 1rem;
+}
+
+    #control .panel .buttons .pp {
+        font-size: 3rem;
+    }
+
+    #control .panel .buttons a {
+        font-size: 2rem;
+        margin: 0.3rem;
+        vertical-align: middle;
+    }
+
+#control .panel .info {
+    padding: 0.4rem;
+}
+
+    #control .panel .info .title {
+        font-size: 1rem;
+    }
+
+    #control .panel .info .artist {
+        font-size: 0.8rem;
+    }
+
+    #control .panel .info span {
+        margin: 0.2rem;
+        display: block;
+    }
+
+#control .panel .config {
+    align-self: flex-end;
+}
+
+#timeline .line {
+    height: 100%;
+    background-color: #006fbd;
+    width: 0%;
+    min-height: 0.3rem;
+    position: relative;
+    z-index: 2;
+}
+
+#timeline .loadline {
+    height: 100%;
+    background-color: #b3b3b3;
+    width: 0;
+    min-height: 0.3rem;
+    position: relative;
+    margin-top: -0.3rem;
+    z-index: 1;
+    transition: all 0.3s;
+}
+
+#timeline .time {
+    width: 100%;
+    position: relative;
+    z-index: 3;
+    top: -0.3rem;
+}
+
+    #timeline .time span {
+        position: relative;
+        transition: opacity 0.3s ease-out;
+        opacity: 0;
+        height: 0;
+        margin: 0;
+        font-size: 0.8rem;
+        overflow: hidden;
+    }
+
+#bar:hover #timeline .time span {
+    opacity: 1;
+    height: 1rem;
+    margin: 5px;
+    margin-top: -0.6rem;
+}
+
+#bar:hover #timeline .loadline {
+    margin-top: -1rem;
+}
+
+#timeline .time .now {
+    float: left;
+}
+
+#timeline .time .end {
+    float: right;
+}
+
+#playlist {
+    max-width: 1240px;
+    min-width: 480px;
+    width: 80%;
+    margin: 5rem auto;
+}
