@@ -3,37 +3,35 @@
 <head>
     <meta charset="utf-8" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="/styles.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
 </head>
 <body ng-controller="playerController">
     <main>
-
-        <div id="playlist">
-            <a href="/Files/atl_-_marabu_(zaycev.net).mp3" song-artist="ATL" song-title="Марабу">ATL - Марабу</a><br />
-            <a href="/Files/atl_-_demony_(zaycev.net).mp3" song-artist="ATL" song-title="Демоны">ATL - Демоны</a>
-        </div>
+        <ul id="playlist">
+            <li ng-repeat="song in songs"><a ng-click="play(song.Id)">{{song.Artist}} - {{song.Name}}</a></li>
+            </div>
     </main>
 
     <div id="bar">
         <div id="control">
             <div id="timeline">
-                <div class="line"></div>
-                <div class="loadline"></div>
+                <div class="line" ng-style="{width: line + '%'}"></div>
+                <div class="loadline" ng-style="{width: loadline + '%'}"></div>
                 <div class="time">
-                    <span class="now">0:00</span>
-                    <span class="end">0:00</span>
+                    <span class="now">{{time}}</span>
+                    <span class="end">{{track.Time}}</span>
                 </div>
             </div>
             <div class="panel">
                 <div class="left">
                     <div class="buttons">
-                        <a href="#" class="material-icons pleft">skip_previous</a>
-                        <a href="#" class="material-icons pp">play_arrow</a>
-                        <a href="#" class="material-icons pright">skip_next</a>
+                        <a href="#" class="material-icons pleft" ng-click="change('prev')">skip_previous</a>
+                        <a href="#" class="material-icons pp" ng-click="ppbtn($event)"><span ng-show="!isplaying">play_arrow</span><span ng-show="isplaying">pause</span></a>
+                        <a href="#" class="material-icons pright" ng-click="change('next')">skip_next</a>
                     </div>
                     <div class="info">
-                        <span class="title">Title</span>
-                        <span class="artist">Artist</span>
+                        <span class="title">{{track.Title}}</span>
+                        <span class="artist">{{track.Artist}}</span>
                     </div>
                 </div>
                 <div class="right">
@@ -45,174 +43,88 @@
         </div>
     </div>
 
-   <!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular.min.js"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular.min.js"></script>
     <script>
-       // var playerApp = angular.module("playerApp", []);
-       //  playerApp.controller("playerController", function ($scope) {
-       //     var Songs = $resource('/api/songs');
-       //     var songs = Songs.get();
-       //     console.log(songs);
-       // });
+        var playerApp = angular.module("playerApp", []);
+        playerApp.controller("playerController", function ($scope, $http) {
+			var player = document.createElement("AUDIO");
+			player.setAttribute("preload", "metadata");
 
-		var player = document.createElement("AUDIO");
-		player.setAttribute("preload", "metadata");
+			$http.get('/api/songs').
+                then(function (response) {
+                    $scope.songs = response.data;
+                });
 
-		var timeline = document.getElementById("timeline");
-		var loadline = document.getElementsByClassName("loadline")[0];
-		var line = document.getElementsByClassName("line")[0];
-		var body = document.getElementsByTagName("BODY")[0];
+			//$scope.songs = [
+			//	{ Id: 1, Artist: "Slava KPSS", Name: "Grime Hate", Url: "./music/grimehate.mp3"},
+			//	{ Id: 2, Artist: "Скриптонит", Name: "Вниз", Url: "./music/Скриптонит - Вниз [gazgolder.com].mp3"}
+			//];
 
-		var pp_button = document.getElementsByClassName("pp")[0];
-		var p_left = document.getElementsByClassName("pleft")[0];
-		var p_right = document.getElementsByClassName("pright")[0];
 
-		var mdown = false;
-		var playing;
-		var timetemp;
-		var isPlaying = false;
-		var nowPlaying = 0;
 
-		function timeline_play() {
-			clearInterval(playing);
-			playing = setInterval(function () {
-				line.style.width = (player.currentTime * 100 / player.duration) + "%";
-				var m = Math.floor(player.currentTime/60);
-				var time = m + ":" + ((Math.round(player.currentTime-m*60) < 10) ? "0" : "") + Math.round(player.currentTime-m*60);
-				document.getElementsByClassName("now")[0].innerHTML = time;
-			}, 100);
-		}
+			$scope.line = 0;
+			$scope.loadline = 0;
+			$scope.isplaying = false;
+			$scope.nowplaying = 0;
+			$scope.time = "0:00";
+			$scope.track = { Title: "Unknown", Artist: "Artist", Time: "0:00" }
 
-		function prev() {
-			if(player.currentTime*100/player.duration < 10) {
-				if(nowPlaying == 0) nowPlaying = songs.length-1;
-				else nowPlaying--;
-				loadline.style.width = "0%";
-				player.src = songs[nowPlaying];
-				player.play();
-			} else {
-				player.currentTime = 0;
+			$scope.ppbtn = function ($event) {
+				$scope.isplaying = !$scope.isplaying;
+				if($scope.isplaying) player.play();
+				else player.pause();
 			}
-		}
 
-		function next() {
-			if(nowPlaying == songs.length-1) nowPlaying = 0;
-			else nowPlaying++;
-			loadline.style.width = "0%";
-			player.src = songs[nowPlaying];
-			player.play();
-		}
-
-		player.addEventListener("progress", function (e) {
-			if(player.buffered.length > 0){
-			  var proportion = (player.buffered.end(player.buffered.length - 1) / player.duration) * 100;
-			  loadline.style.width = proportion + "%";
-			  //console.log(proportion);
+			function findSong(song) {
+				n = -1;
+				for(var i = 0; i < $scope.songs.length; i++)
+					if($scope.songs[i].Id == song) {
+						n = i;
+					}
+				return n;
 			}
-		});
 
-		player.addEventListener('loadeddata', function () {
-		    loadline.style.width = "100%";
-		});
-
-		player.addEventListener("ended", function () {
-			next();
-		});
-
-		var songs = document.querySelectorAll("#playlist a");
-		player.src = songs[0];
-		for(var i = 0; i < songs.length; i++) {
-			songs[i].setAttribute("playlist-num", i);
-			songs[i].addEventListener("click", function (e) {
-				if(this.getAttribute("playlist-num") != nowPlaying) {
-				    nowPlaying = this.getAttribute("playlist-num");
-				    loadline.style.width = "0%";
-					player.src = this.href;
-					player.play();
+			$scope.play = function (song) {
+				if(song == $scope.nowplaying) {
+					$scope.ppbtn();
 				} else {
-					if(isPlaying) {
-						player.pause();
+					var n = findSong(song);
+					if(n < 0) {
+						alert("Такого трека нет");
 					} else {
+						$scope.nowplaying = song;
+
+						$scope.track.Title = $scope.songs[n].Name;
+						$scope.track.Artist = $scope.songs[n].Artist;
+						player.src = $scope.songs[n].Url;
+
+						$scope.isplaying = true;
 						player.play();
 					}
 				}
-				e.preventDefault();
-			});
-		}
-
-		player.addEventListener('canplaythrough', function() {
-			var m = Math.floor(player.duration/60);
-			var time = m + ":" + ((Math.round(player.duration-m*60) < 10) ? "0" : "") + Math.round(player.duration-m*60);
-			document.getElementsByClassName("end")[0].innerHTML = time;
-			document.querySelector(".panel .info .artist").innerText = songs[nowPlaying].getAttribute("song-artist");
-			document.querySelector(".panel .info .title").innerText = songs[nowPlaying].getAttribute("song-title");
-		}, false);
-
-		player.addEventListener("play", function() {
-			isPlaying = true;
-			timeline_play();
-			pp_button.innerText = "pause";
-		}, false);
-
-		player.addEventListener("pause", function() {
-			isPlaying = false;
-			clearInterval(playing);
-			pp_button.innerText = "play_arrow";
-		}, false);
-
-		timeline.addEventListener("mousedown", function (e) {
-			clearInterval(playing);
-			mdown = true;
-			timetemp = (e.offsetX)*100/timeline.clientWidth;
-			line.style.width = timetemp+"%";
-			document.ondragstart = function() { return false };
-			document.body.onselectstart = function() { return false };
-		});
-
-		body.addEventListener("mouseup", function () {
-			if(mdown) {
-				mdown = false;
-				player.currentTime = Math.round(player.duration*timetemp/100);
-				timeline_play();
-				document.ondragstart = null;
-				document.body.onselectstart = null;
 			}
-		});
 
-		body.addEventListener("mousemove", function (e) {
-			if(mdown) {
-				tmlno = timeline.getBoundingClientRect();
-				distance = tmlno.left-e.path[0].getBoundingClientRect().left;
-				timetemp = (e.offsetX-distance)*100/timeline.clientWidth;
-				if(timetemp <= 100) {
-					line.style.width = timetemp+"%";
+			$scope.change = function (direction) {
+				switch(direction) {
+					case "next":
+						var song = findSong($scope.nowplaying);
+						if(song == $scope.songs.length-1) song = 0;
+						else song++;
+						$scope.play($scope.songs[song].Id);
+					break;
+					case "prev":
+						if($scope.line > 10) {
+							player.currentTime = 0;
+						} else {
+							var song = findSong($scope.nowplaying);
+							if(song == 0) song = $scope.songs.length-1;
+							else song--;
+							$scope.play($scope.songs[song].Id);
+						}
+					break;
 				}
 			}
-		});
-
-		pp_button.addEventListener('click', function() {
-			if(isPlaying) {
-				player.pause();
-			} else {
-				player.play();
-			}
-		});
-
-		p_left.addEventListener('click', function() {
-			prev();
-		});
-
-		p_right.addEventListener('click', function() {
-			next();
-		});
-
-		//timeline.addEventListener("mousemove", function (e) {
-		//	if(mdown) {
-		//		timetemp = e.offsetX*100/timeline.clientWidth;
-		//		line.style.width = timetemp+"%";
-		//	}
-		//});
-
-		player.load();
+       });
     </script>
 </body>
 </html>
