@@ -7,9 +7,18 @@
 </head>
 <body ng-controller="playerController">
     <main>
-        <ul id="playlist">
-            <li ng-repeat="song in songs"><a ng-click="play(song.Id)">{{song.Artist}} - {{song.Name}}</a></li>
-            </div>
+        <div class="menu">
+            <ul>
+                <li><a href="#"><img src="/Images/db.svg" /><span>Dropbox</span></a></li>
+                <li><a href="#"><img src="/Images/gd.svg" /><span>Google Drive</span></a></li>
+                <li><a href="#"><img src="/Images/vk.svg" /><span>VKontakte</span></a></li>
+            </ul>
+        </div>
+        <div class="main">
+            <ul id="playlist">
+                <li ng-repeat="song in songs"><a ng-click="play(song.Id)">{{song.Artist}} - {{song.Name}}</a></li>
+            </ul>
+        </div>
     </main>
 
     <div id="bar">
@@ -53,14 +62,16 @@
 			$http.get('/api/songs').
                 then(function (response) {
                     $scope.songs = response.data;
+                    if ($scope.songs.length > 0) {
+                        $scope.setTrack($scope.songs[0]);
+                        console.log("1");
+                    }
                 });
 
 			//$scope.songs = [
 			//	{ Id: 1, Artist: "Slava KPSS", Name: "Grime Hate", Url: "./music/grimehate.mp3"},
 			//	{ Id: 2, Artist: "Скриптонит", Name: "Вниз", Url: "./music/Скриптонит - Вниз [gazgolder.com].mp3"}
 			//];
-
-
 
 			$scope.line = 0;
 			$scope.loadline = 0;
@@ -76,12 +87,21 @@
 			}
 
 			function findSong(song) {
-				n = -1;
-				for(var i = 0; i < $scope.songs.length; i++)
-					if($scope.songs[i].Id == song) {
-						n = i;
-					}
-				return n;
+			    n = -1;
+			    for (var i = 0; i < $scope.songs.length; i++)
+			        if ($scope.songs[i].Id == song) {
+			            n = i;
+			        }
+			    return n;
+			}
+
+			$scope.setTrack = function (song) {
+			    $scope.track.Title = song.Name;
+			    $scope.track.Artist = song.Artist;
+			    player.src = song.Url;
+
+			    var m = Math.floor(player.duration / 60);
+			    $scope.track.Time = m + ":" + ((Math.round(player.duration - m * 60) < 10) ? "0" : "") + Math.round(player.duration - m * 60);
 			}
 
 			$scope.play = function (song) {
@@ -94,9 +114,7 @@
 					} else {
 						$scope.nowplaying = song;
 
-						$scope.track.Title = $scope.songs[n].Name;
-						$scope.track.Artist = $scope.songs[n].Artist;
-						player.src = $scope.songs[n].Url;
+						$scope.setTrack($scope.songs[n]);
 
 						$scope.isplaying = true;
 						player.play();

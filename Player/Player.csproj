@@ -116,6 +116,13 @@
     <Content Include="Files\atl_-_demony_%28zaycev.net%29.mp3" />
     <Content Include="Files\atl_-_marabu_%28zaycev.net%29.mp3" />
     <Content Include="Global.asax" />
+    <Content Include="Images\gd.svg" />
+    <Content Include="Images\db.svg" />
+    <Content Include="Images\sc.svg" />
+    <Content Include="Images\ap.svg" />
+    <Content Include="Images\an.svg" />
+    <Content Include="Images\1479526499_vkontakte.svg" />
+    <Content Include="Images\vk.svg" />
     <Content Include="index.html" />
     <Content Include="styles.css" />
     <Content Include="Web.config" />

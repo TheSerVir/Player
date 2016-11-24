@@ -170,6 +170,49 @@ a:hover {
 #playlist {
     max-width: 1240px;
     min-width: 480px;
-    width: 80%;
-    margin: 5rem auto;
+    margin: 1rem auto;
+    padding:0;
+}
+
+#playlist li {
+    list-style-type: none;
+    margin:0;
+    padding:0.5rem 1rem;
+    width:100%;
+    border:2px solid #006fbd;
+}
+
+main {
+    display: flex;
+    height:100%;
+    width:100%;
+
+}
+
+.menu {
+    max-width: 240px;
+    width: 100%;
+}
+
+.menu li {
+    list-style-type: none;
+    width: 100%;
+    margin: 0;
+    padding: 0.5rem;
+    background-color: rgba(238, 238, 238, 0.5);
+}
+
+.menu li span {
+    font-size: 0.8rem;
+}
+
+.menu li img {
+    height: 1.2rem;
+    vertical-align: middle;
+    margin-right: 0.5rem;
+}
+
+.main {
+    max-width: 1000px;
+    width:100%;
 }
